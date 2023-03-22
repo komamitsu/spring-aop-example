@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 import org.aopalliance.intercept.MethodInterceptor;
+import org.komamitsu.springtest.aop.MyAdder.DefaultAddr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.framework.ProxyFactory;
@@ -28,15 +29,6 @@ public class Main {
       "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"
   );
 
-  private MyAdder createAdder() {
-    ProxyFactory factory = new ProxyFactory(new Class<?>[] { MyAdder.class });
-    factory.addAdvice((MethodInterceptor) invocation -> {
-      String[] numbers = invocation.getMethod().getName().split("Plus");
-      return Arrays.stream(numbers).mapToInt(x -> NUMBERS.indexOf(x.toLowerCase())).sum();
-    });
-    return (MyAdder) factory.getProxy();
-  }
-
   @Bean
   public CommandLineRunner run() throws Exception {
     return (String[] args) -> {
@@ -52,11 +44,12 @@ public class Main {
       // With ProxyFactory
       MyAdder myAdder;
       {
-        ProxyFactory factory = new ProxyFactory(new Class<?>[] { MyAdder.class });
+        ProxyFactory factory = new ProxyFactory(new DefaultAddr());
+        factory.addInterface(MyAdder.class);
         factory.addAdvice((MethodInterceptor) invocation -> {
           Method method = invocation.getMethod();
-          if (method.getName().equals("toString")) {
-            return "Hi! I'm a proxy!";
+          if (!(method.getReturnType().isAssignableFrom(int.class) && method.getName().contains("Plus"))) {
+            return invocation.proceed();
           }
           String[] numbers = method.getName().split("Plus");
           return Arrays.stream(numbers).mapToInt(x -> NUMBERS.indexOf(x.toLowerCase())).sum();
