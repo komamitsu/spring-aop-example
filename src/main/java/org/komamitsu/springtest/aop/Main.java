@@ -4,7 +4,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 import org.aopalliance.intercept.MethodInterceptor;
-import org.komamitsu.springtest.aop.MyAdder.DefaultAddr;
+import org.komamitsu.springtest.aop.MyAdder.DefaultAdder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.framework.ProxyFactory;
@@ -44,7 +44,7 @@ public class Main {
       // With ProxyFactory
       MyAdder myAdder;
       {
-        ProxyFactory factory = new ProxyFactory(new DefaultAddr());
+        ProxyFactory factory = new ProxyFactory(new DefaultAdder());
         factory.addInterface(MyAdder.class);
         factory.addAdvice((MethodInterceptor) invocation -> {
           Method method = invocation.getMethod();

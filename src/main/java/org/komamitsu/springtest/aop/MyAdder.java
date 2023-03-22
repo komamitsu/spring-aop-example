@@ -5,7 +5,7 @@ public interface MyAdder {
 
   int tenPlusNine();
 
-  class DefaultAddr implements MyAdder {
+  class DefaultAdder implements MyAdder {
 
     @Override
     public int onePlusTwoPlusThree() {
